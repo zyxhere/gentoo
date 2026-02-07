@@ -1,0 +1,318 @@
+# Copyright 2026 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+EAPI=8
+
+CRATES="
+	aho-corasick@1.1.4
+	anes@0.1.6
+	anstream@0.6.21
+	anstyle-parse@0.2.7
+	anstyle-query@1.1.5
+	anstyle-wincon@3.0.11
+	anstyle@1.0.13
+	arbitrary@1.4.2
+	async-channel@2.5.0
+	async-executor@1.13.3
+	async-fs@2.2.0
+	async-io@2.6.0
+	async-lock@3.4.1
+	async-net@2.0.0
+	async-process@2.5.0
+	async-signal@0.2.13
+	async-task@4.7.1
+	atomic-waker@1.1.2
+	autocfg@1.5.0
+	aws-lc-rs@1.15.1
+	aws-lc-sys@0.34.0
+	bindgen@0.72.1
+	bitflags@2.10.0
+	block-buffer@0.10.4
+	blocking@1.6.2
+	bumpalo@3.19.0
+	byteorder@1.5.0
+	bytes@1.11.0
+	c_linked_list@1.1.1
+	cast@0.3.0
+	cc@1.2.49
+	cesu8@1.1.0
+	cexpr@0.6.0
+	cfg-expr@0.20.5
+	cfg-if@1.0.4
+	ciborium-io@0.2.2
+	ciborium-ll@0.2.2
+	ciborium@0.2.2
+	clang-sys@1.8.1
+	clap@4.5.53
+	clap_builder@4.5.53
+	clap_derive@4.5.49
+	clap_lex@0.7.6
+	cmake@0.1.56
+	colorchoice@1.0.4
+	combine@4.6.7
+	concurrent-queue@2.5.0
+	core-foundation-sys@0.8.7
+	core-foundation@0.10.1
+	cpufeatures@0.2.17
+	crc-catalog@2.4.0
+	crc@3.4.0
+	criterion-plot@0.5.0
+	criterion@0.6.0
+	crossbeam-deque@0.8.6
+	crossbeam-epoch@0.9.18
+	crossbeam-utils@0.8.21
+	crunchy@0.2.4
+	crypto-common@0.1.7
+	derive_arbitrary@1.4.2
+	digest@0.10.7
+	dunce@1.0.5
+	either@1.15.0
+	equivalent@1.0.2
+	errno@0.3.14
+	event-listener-strategy@0.5.4
+	event-listener@5.4.1
+	fastrand@2.3.0
+	find-msvc-tools@0.1.5
+	flume@0.12.0
+	foreign-types-shared@0.1.1
+	foreign-types@0.3.2
+	fs_extra@1.3.0
+	futures-channel@0.3.31
+	futures-core@0.3.31
+	futures-executor@0.3.31
+	futures-io@0.3.31
+	futures-lite@2.6.1
+	futures-macro@0.3.31
+	futures-sink@0.3.31
+	futures-task@0.3.31
+	futures-timer@3.0.3
+	futures-util@0.3.31
+	futures@0.3.31
+	gcc@0.3.55
+	generic-array@0.14.7
+	get_if_addrs-sys@0.1.1
+	get_if_addrs@0.5.3
+	getrandom@0.2.16
+	getrandom@0.3.4
+	glob@0.3.3
+	half@2.7.1
+	hashbrown@0.16.1
+	heck@0.5.0
+	hermit-abi@0.5.2
+	hmac@0.12.1
+	indexmap@2.12.1
+	is_terminal_polyfill@1.70.2
+	itertools@0.10.5
+	itertools@0.13.0
+	itoa@1.0.15
+	jni-sys@0.3.0
+	jni@0.21.1
+	jobserver@0.1.34
+	js-sys@0.3.83
+	lazy_static@1.5.0
+	libc@0.2.178
+	libfuzzer-sys@0.4.10
+	libloading@0.8.9
+	linux-raw-sys@0.11.0
+	lock_api@0.4.14
+	log@0.4.29
+	matchers@0.2.0
+	md-5@0.10.6
+	memchr@2.7.6
+	minimal-lexical@0.2.1
+	mio@1.1.1
+	no-std-net@0.6.0
+	nom@7.1.3
+	nom@8.0.0
+	nu-ansi-term@0.50.3
+	num-traits@0.2.19
+	once_cell@1.21.3
+	once_cell_polyfill@1.70.2
+	oorandom@11.1.5
+	openssl-macros@0.1.1
+	openssl-probe@0.1.6
+	openssl-sys@0.9.111
+	openssl@0.10.75
+	parking@2.2.1
+	pin-project-internal@1.1.10
+	pin-project-lite@0.2.16
+	pin-project@1.1.10
+	pin-utils@0.1.0
+	piper@0.2.4
+	pkg-config@0.3.32
+	plotters-backend@0.3.7
+	plotters-svg@0.3.7
+	plotters@0.3.7
+	pnet_base@0.35.0
+	pnet_macros@0.35.0
+	pnet_macros_support@0.35.0
+	pnet_packet@0.35.0
+	polling@3.11.0
+	ppv-lite86@0.2.21
+	prettyplease@0.2.37
+	proc-macro2@1.0.103
+	quote@1.0.42
+	r-efi@5.3.0
+	rand@0.9.2
+	rand_chacha@0.9.0
+	rand_core@0.9.3
+	rayon-core@1.13.0
+	rayon@1.11.0
+	regex-automata@0.4.13
+	regex-syntax@0.8.8
+	regex@1.12.2
+	ring@0.17.14
+	rustc-hash@2.1.1
+	rustix@1.1.2
+	rustls-native-certs@0.8.2
+	rustls-pki-types@1.13.1
+	rustls-platform-verifier-android@0.1.1
+	rustls-platform-verifier@0.6.2
+	rustls-webpki@0.103.8
+	rustls@0.23.35
+	rustversion@1.0.22
+	ryu@1.0.20
+	same-file@1.0.6
+	sans-io-time@0.1.2
+	schannel@0.1.28
+	scopeguard@1.2.0
+	security-framework-sys@2.15.0
+	security-framework@3.5.1
+	serde@1.0.228
+	serde_core@1.0.228
+	serde_derive@1.0.228
+	serde_json@1.0.145
+	serde_spanned@1.0.3
+	sha1@0.10.6
+	sha2@0.10.9
+	sharded-slab@0.1.7
+	shlex@1.3.0
+	signal-hook-registry@1.4.7
+	slab@0.4.11
+	smallvec@1.15.1
+	smol@2.0.2
+	socket2@0.6.1
+	spin@0.9.8
+	strsim@0.11.1
+	stun-proto@1.0.2
+	stun-types@1.0.2
+	subtle@2.6.1
+	syn@2.0.111
+	system-deps@7.0.7
+	target-lexicon@0.13.3
+	thiserror-impl@1.0.69
+	thiserror-impl@2.0.17
+	thiserror@1.0.69
+	thiserror@2.0.17
+	thread_local@1.1.9
+	tinytemplate@1.2.1
+	tokio@1.48.0
+	toml@0.9.8
+	toml_datetime@0.7.3
+	toml_parser@1.0.4
+	toml_writer@1.0.4
+	tracing-attributes@0.1.31
+	tracing-core@0.1.35
+	tracing-futures@0.2.5
+	tracing-log@0.2.0
+	tracing-subscriber@0.3.22
+	tracing@0.1.43
+	turn-client-proto@0.4.1
+	turn-server-proto@0.4.1
+	turn-types@0.4.0
+	typenum@1.19.0
+	unicode-ident@1.0.22
+	untrusted@0.9.0
+	utf8parse@0.2.2
+	valuable@0.1.1
+	vcpkg@0.2.15
+	version-compare@0.2.1
+	version_check@0.9.5
+	walkdir@2.5.0
+	wasi@0.11.1+wasi-snapshot-preview1
+	wasip2@1.0.1+wasi-0.2.4
+	wasm-bindgen-macro-support@0.2.106
+	wasm-bindgen-macro@0.2.106
+	wasm-bindgen-shared@0.2.106
+	wasm-bindgen@0.2.106
+	web-sys@0.3.83
+	webpki-root-certs@1.0.4
+	winapi-util@0.1.11
+	winapi@0.2.8
+	windows-link@0.2.1
+	windows-sys@0.45.0
+	windows-sys@0.52.0
+	windows-sys@0.60.2
+	windows-sys@0.61.2
+	windows-targets@0.42.2
+	windows-targets@0.52.6
+	windows-targets@0.53.5
+	windows_aarch64_gnullvm@0.42.2
+	windows_aarch64_gnullvm@0.52.6
+	windows_aarch64_gnullvm@0.53.1
+	windows_aarch64_msvc@0.42.2
+	windows_aarch64_msvc@0.52.6
+	windows_aarch64_msvc@0.53.1
+	windows_i686_gnu@0.42.2
+	windows_i686_gnu@0.52.6
+	windows_i686_gnu@0.53.1
+	windows_i686_gnullvm@0.52.6
+	windows_i686_gnullvm@0.53.1
+	windows_i686_msvc@0.42.2
+	windows_i686_msvc@0.52.6
+	windows_i686_msvc@0.53.1
+	windows_x86_64_gnu@0.42.2
+	windows_x86_64_gnu@0.52.6
+	windows_x86_64_gnu@0.53.1
+	windows_x86_64_gnullvm@0.42.2
+	windows_x86_64_gnullvm@0.52.6
+	windows_x86_64_gnullvm@0.53.1
+	windows_x86_64_msvc@0.42.2
+	windows_x86_64_msvc@0.52.6
+	windows_x86_64_msvc@0.53.1
+	winnow@0.7.14
+	wit-bindgen@0.46.0
+	zerocopy-derive@0.8.31
+	zerocopy@0.8.31
+	zeroize@1.8.2
+"
+
+RUST_MIN_VER="1.85.0"
+
+inherit cargo
+
+DESCRIPTION="ICE (RFC8445) implementation"
+HOMEPAGE="https://github.com/ystreet/librice"
+SRC_URI="
+	https://github.com/ystreet/librice/archive/refs/tags/v${PV}.tar.gz
+		-> ${P}.tar.gz
+	${CARGO_CRATE_URIS}
+"
+
+LICENSE="|| ( Apache-2.0 MIT )"
+# Dependent crate licenses
+LICENSE+="
+	Apache-2.0 Apache-2.0-with-LLVM-exceptions BSD CDLA-Permissive-2.0
+	ISC MIT UoI-NCSA openssl Unicode-3.0
+"
+SLOT="0"
+KEYWORDS="~amd64"
+
+BDEPEND="dev-util/cargo-c"
+
+src_prepare() {
+	default
+	# Disable LTO
+	sed -i 's:profile:ignore:' Cargo.toml
+}
+
+#src_compile() {
+#	cargo_src_compile --package "${PN}"
+#}
+
+src_install() {
+	cargo-cinstall --verbose -p rice-c \
+		--prefix "${EPREFIX}" \
+		--libdir $(get_libdir) \
+		--library-type=cdylib
+}

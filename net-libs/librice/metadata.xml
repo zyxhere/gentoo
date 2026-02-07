@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>exampledev@gentoo.org</email>
+    <description>Primary maintainer</description>
+  </maintainer>
+  <maintainer type="project">
+    <email>exampleproject@gentoo.org</email>
+    <name>Gentoo Example Project</name>
+  </maintainer>
+  <upstream>
+    <remote-id type="github">ystreet/librice</remote-id>
+  </upstream>
+</pkgmetadata>
